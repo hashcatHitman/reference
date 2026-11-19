@@ -49,7 +49,7 @@ jobs:
         cargo run --release -p grammar-check -- lex-compare --tool rustc_parse
 
     - name: Check for existing open issues
-      if: github.repository == 'rust-lang/reference' && steps.grammar-check.outcome == 'failure'
+      if: ( github.repository == 'rust-lang/reference' || github.event_name == 'workflow_dispatch' ) && steps.grammar-check.outcome == 'failure'
       id: check-issues
       env:
         GH_TOKEN: ${{ github.token }}
@@ -59,7 +59,7 @@ jobs:
         echo "open_issues=$ISSUE_COUNT" >> $GITHUB_OUTPUT
 
     - name: Create issue on failure
-      if: github.repository == 'rust-lang/reference' && steps.grammar-check.outcome == 'failure' && steps.check-issues.outputs.open_issues == '0'
+      if: ( github.repository == 'rust-lang/reference' || github.event_name == 'workflow_dispatch' ) && steps.grammar-check.outcome == 'failure' && steps.check-issues.outputs.open_issues == '0'
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
